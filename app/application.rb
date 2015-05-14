@@ -31,3 +31,7 @@ end
 error 404 do
   '{"errors":[{"code":"record_not_found","message":"Couldn\'t find record"}]}'
 end
+
+enable :sessions
+
+require 'tilt/erb'

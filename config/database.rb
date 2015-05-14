@@ -1,4 +1,7 @@
-# init DB connection
-db_settings = YAML::load(File.open(File.join(settings.root, 'config/database.yml')))[Sinatra::Application.environment.to_s]
+require 'yaml'
+require 'pg'
 
-# ActiveRecord::Base.establish_connection(db_settings)
+# init DB connection
+db_settings = YAML::load(File.open(File.join(settings.root, 'config/database.yml')))
+
+$conn = PG.connect( db_settings )

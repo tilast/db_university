@@ -5,3 +5,8 @@ CREATE TABLE users (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE access_tokens (
+  token VARCHAR(64),
+  user_id INT,
+  FOREIGN KEY user_id REFERENCES users
+);

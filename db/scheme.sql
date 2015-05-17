@@ -1,14 +1,42 @@
 CREATE TABLE users (
   id SERIAL, 
   login VARCHAR NOT NULL UNIQUE,
-  password VARCHAR(32),
+  password VARCHAR(40) NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE accesstokens (
   id SERIAL,
-  token VARCHAR(64),
-  user_id INT REFERENCES users(id),
-  expires_at TIMESTAMP,
+  token VARCHAR(40) NOT NULL,
+  user_id INT REFERENCES users(id) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
   PRIMARY KEY(id)
+);
+
+CREATE TABLE gifs (
+  id SERIAL,
+  token VARCHAR(32) NOT NULL UNIQUE,
+  description TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  user_id INT REFERENCES users(id) NOT NULL,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE gifimages (
+  id SERIAL,
+  url VARCHAR NOT NULL,
+  gif_id INT REFERENCES gifs(id) NOT NULL ON DELETE CASCADE ON UPDATE CASCADE,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE albums (
+  id SERIAL,
+  name VARCHAR NOT NULL,
+  user_id INT REFERENCES users(id) NOT NULL,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE albumshasgifs (
+  album_id INT REFERENCES albums(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  gif_id   INT REFERENCES gifs(id)   ON DELETE CASCADE ON UPDATE CASCADE
 );

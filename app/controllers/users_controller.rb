@@ -1,9 +1,4 @@
 get '/' do
-  session[:user] ||= "user#{rand}"
-  
-  response.set_cookie 'user', session[:user]
-
-  erb :index, locals: { session: session[:user], cookie: request.cookies['user'] }
 end
 
 get '/signin.json' do
@@ -14,13 +9,20 @@ get '/signin.json' do
     json token: AuthService.authorize(login, password).token
   rescue AuthorizationError => e
     status 403
-    json error: 'Access Forbidden'
+    json error: e.message
+  end
+end
+
+post '/signup.json' do
+  begin
+    json user: AuthService.signup(params[:login].to_s, params[:password].to_s)
+  rescue SignupLoginLengthError, SignupPasswordLengthError, SignupLoginExistsError => e
+    status 403
+    json error: e.message
   end
 end
 
 get '/authorized_page.json' do
-  p request.env['HTTP_AUTHORIZATION'][6..-1]
-
   begin
     user = AuthService.find_user_by_token request.env['HTTP_AUTHORIZATION'][6..-1]
 

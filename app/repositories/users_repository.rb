@@ -1,0 +1,2 @@
+class UsersRepo < VirtusRawPGRepo
+end

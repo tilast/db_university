@@ -1,5 +1,5 @@
 CREATE TABLE users (
-  id INT AUTO_INCREMENT, 
+  id SERIAL, 
   login VARCHAR NOT NULL UNIQUE,
   password VARCHAR(32),
   PRIMARY KEY (id)
@@ -7,6 +7,7 @@ CREATE TABLE users (
 
 CREATE TABLE access_tokens (
   token VARCHAR(64),
-  user_id INT,
-  FOREIGN KEY user_id REFERENCES users
+  user_id INT REFERENCES users(id),
+  expires_at TIMESTAMP,
+  PRIMARY KEY(token)
 );

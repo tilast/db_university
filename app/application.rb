@@ -4,6 +4,12 @@ app_env = (ENV['RAILS_ENV'] || ENV['RACK_ENV'] || 'development' ).to_sym
 require 'bundler/setup'
 Bundler.require :default, app_env
 
+require 'tilt/erb'
+require 'digest/sha1'
+require 'base64'
+require 'securerandom'
+require 'active_support/all'
+
 require 'sinatra/main'
 # override app environment
 Sinatra::Application.environment = app_env
@@ -24,7 +30,7 @@ Dir[File.join(settings.root, "app/models/*.rb")].sort.each do |file|
   autoload File.basename(file, '.rb').camelize.to_sym, file
 end
 
-%w(serializers/** controllers/** services).each do |folder|
+%w(serializers/** controllers/** services repositories).each do |folder|
   Dir[File.join(settings.root, "app/#{folder}/*.rb")].sort.each { |f| require f }
 end
 
@@ -33,5 +39,3 @@ error 404 do
 end
 
 enable :sessions
-
-require 'tilt/erb'

@@ -5,9 +5,10 @@ CREATE TABLE users (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE access_tokens (
+CREATE TABLE accesstokens (
+  id SERIAL,
   token VARCHAR(64),
   user_id INT REFERENCES users(id),
   expires_at TIMESTAMP,
-  PRIMARY KEY(token)
+  PRIMARY KEY(id)
 );

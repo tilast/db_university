@@ -9,8 +9,10 @@ require 'digest/sha1'
 require 'base64'
 require 'securerandom'
 require 'active_support/all'
+require 'json'
 
 require 'sinatra/main'
+require "sinatra/json"
 # override app environment
 Sinatra::Application.environment = app_env
 puts "Loaded #{Sinatra::Application.environment} environment"
@@ -22,15 +24,14 @@ set :base_uri,  '/'
 $: << File.expand_path(File.join(settings.root, 'app/models'))
 $: << File.expand_path(File.join(settings.root, '.'))
 
-require 'config/config'
-
 set :raise_errors, (ENV['RAISE_ERRORS'] == '1' || false)
+set :json_encoder, :to_json
 
 Dir[File.join(settings.root, "app/models/*.rb")].sort.each do |file|
   autoload File.basename(file, '.rb').camelize.to_sym, file
 end
 
-%w(serializers/** controllers/** services repositories).each do |folder|
+%w(serializers/** controllers/** services repos).each do |folder|
   Dir[File.join(settings.root, "app/#{folder}/*.rb")].sort.each { |f| require f }
 end
 
@@ -39,3 +40,9 @@ error 404 do
 end
 
 enable :sessions
+
+before do
+  content_type :json
+end
+
+require 'config/config'

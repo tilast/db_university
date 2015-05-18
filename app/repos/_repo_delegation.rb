@@ -7,6 +7,10 @@ module Repo::Delegation
     Repo.find object_class, id
   end
 
+  def all
+    Repo.all object_class
+  end
+
   def delete(record)
     Repo.delete record
   end

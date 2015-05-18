@@ -15,9 +15,13 @@ class Repo
     klass.new(adapter.exec("SELECT * FROM #{self.table(klass)} WHERE id=#{adapter.escape_string(id.to_s)} LIMIT 1").first)
   end
 
+  def self.all(klass)
+    adapter.exec("SELECT * FROM #{self.table(klass)}}")
+  end
+
   def self.query(selector, params=[])
     params.each do |param|
-      selector.sub! "|?|", "'#{adapter.escape_string(param)}'"
+      selector.sub! "|?|", "'#{adapter.escape_string(param.to_s)}'"
     end
 
     p selector

@@ -39,10 +39,40 @@ error 404 do
   '{"errors":[{"code":"record_not_found","message":"Couldn\'t find record"}]}'
 end
 
-enable :sessions
-
 before do
   content_type :json
 end
 
 require 'config/config'
+
+class Rack::OAuth
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)    
+    begin
+      env[:user] = AuthService.find_user_by_token env['HTTP_AUTHORIZATION'][6..-1]
+      
+      status, headers, body = @app.call(env)
+      
+      [status, headers, body]
+    rescue AuthorizationError => e
+      headers = env.select {|k,v| k.start_with? 'HTTP_'}
+      headers['Content-Type'] = 'application/json'
+      
+      [403, headers, [{error: 'Access Forbidden'}.to_json.to_s]]
+    end
+  end
+end
+
+class ProtectedRoutes < Sinatra::Base
+  use Rack::OAuth
+
+  def current_user
+    request.env[:user]
+  end
+end
+
+class PublicRoutes < Sinatra::Base
+end

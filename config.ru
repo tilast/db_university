@@ -4,4 +4,10 @@ $: << File.dirname(__FILE__)
 
 require 'app/application'
 
-run Sinatra::Application
+map "/" do
+  run PublicRoutes
+end
+
+map "/protected" do
+  run ProtectedRoutes
+end

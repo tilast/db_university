@@ -1,7 +1,7 @@
 get '/' do
 end
 
-get '/signin.json' do
+get '/api/access_tokens.json' do
   login, password = Base64.decode64(request.env['HTTP_AUTHORIZATION'][6..-1]).split(':')
   password = Digest::SHA1.hexdigest(password.to_s)
 
@@ -13,7 +13,7 @@ get '/signin.json' do
   end
 end
 
-post '/signup.json' do
+post '/api/users.json' do
   begin
     json user: AuthService.signup(params[:login].to_s, params[:password].to_s)
   rescue SignupLoginLengthError, SignupPasswordLengthError, SignupLoginExistsError => e
@@ -22,13 +22,13 @@ post '/signup.json' do
   end
 end
 
-get '/authorized_page.json' do
-  begin
-    user = AuthService.find_user_by_token request.env['HTTP_AUTHORIZATION'][6..-1]
+# get '/authorized_page.json' do
+#   begin
+#     user = AuthService.find_user_by_token request.env['HTTP_AUTHORIZATION'][6..-1]
 
-    json user: UserSerializer.new(user)
-  rescue AuthorizationError => e
-    status 403
-    json error: 'Access Forbidden'
-  end
-end
+#     json user: UserSerializer.new(user)
+#   rescue AuthorizationError => e
+#     status 403
+#     json error: 'Access Forbidden'
+#   end
+# end
